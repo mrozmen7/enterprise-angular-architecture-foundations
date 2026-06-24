@@ -45,6 +45,8 @@ describe('App', () => {
       'Payment Platform Migration',
     );
     expect(compiled.querySelector('.project-detail')?.textContent).toContain('Maya Chen');
+    expect(compiled.querySelector('.project-detail')?.textContent).toContain('High');
+    expect(compiled.querySelector('.project-detail')?.textContent).toContain('2026-10-30');
     expect(compiled.querySelector('.project-card--selected')).toBeTruthy();
   });
 
@@ -78,7 +80,15 @@ describe('App', () => {
       throw new Error('Status filter was not rendered.');
     }
 
-    statusSelect.value = 'Planning';
+    const planningOption = Array.from(statusSelect.options).find(
+      (option) => option.value === 'Planning',
+    );
+
+    if (!planningOption) {
+      throw new Error('Planning status option was not rendered.');
+    }
+
+    planningOption.selected = true;
     statusSelect.dispatchEvent(new Event('change'));
     fixture.detectChanges();
 

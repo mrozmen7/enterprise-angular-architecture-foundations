@@ -258,6 +258,22 @@ h2 {
   line-height: 1.6;
 }
 
+.project-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.project-card__meta span {
+  padding: 0.4rem 0.65rem;
+  color: #334155;
+  background: #f1f5f9;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
 .project-card__customer {
   margin: 0 0 0.25rem;
   color: #2563eb !important;

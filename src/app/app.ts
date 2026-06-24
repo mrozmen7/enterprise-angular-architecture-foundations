@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-
-type Project = {
-  id: number;
-  name: string;
-  customer: string;
-  status: string;
-  owner: string;
-  summary: string;
-};
+import {
+  createProjectWorkspaceState,
+  getFilteredProjects,
+  getSelectedProject,
+  isProjectStatusFilter,
+  PROJECT_STATUS_FILTERS,
+} from './projects/application/project-workspace.state';
+import { PROJECT_SEED } from './projects/data/project.seed';
+import type { ProjectId } from './projects/domain/project';
 
 @Component({
   selector: 'app-root',
@@ -18,79 +18,54 @@ type Project = {
 export class App {
   protected readonly productName = 'OpsFlow';
 
-  protected chapterStatus = 'Foundation ready · Chapter 1 next';
+  protected chapterStatus = 'Chapter 2 · Domain modeling';
 
-  protected searchTerm = '';
+  protected readonly workspaceState = createProjectWorkspaceState(PROJECT_SEED);
 
-  protected statusFilter = 'All';
+  protected get statusOptions(): readonly string[] {
+    return PROJECT_STATUS_FILTERS;
+  }
 
-  protected selectedProject: Project | null = null;
+  protected get searchTerm(): string {
+    return this.workspaceState.searchTerm;
+  }
 
-  protected readonly statusOptions = ['All', 'Active', 'Planning', 'At Risk'];
+  protected get statusFilter(): string {
+    return this.workspaceState.statusFilter;
+  }
 
-  protected readonly projects: Project[] = [
-    {
-      id: 1,
-      name: 'Payment Platform Migration',
-      customer: 'Northstar Bank',
-      status: 'Active',
-      owner: 'Maya Chen',
-      summary: 'Move the bank payment platform to a resilient cloud-based architecture.',
-    },
-    {
-      id: 2,
-      name: 'Customer Portal Redesign',
-      customer: 'Acme Industries',
-      status: 'Planning',
-      owner: 'Jonas Keller',
-      summary: 'Redesign the customer portal around faster self-service workflows.',
-    },
-    {
-      id: 3,
-      name: 'Compliance Reporting Automation',
-      customer: 'Helvetia Finance',
-      status: 'At Risk',
-      owner: 'Sofia Rossi',
-      summary: 'Automate regulated reports and reduce manual reconciliation work.',
-    },
-  ];
+  protected get filteredProjects() {
+    return getFilteredProjects(this.workspaceState);
+  }
 
-  protected get filteredProjects(): Project[] {
-    const normalizedSearchTerm = this.searchTerm.trim().toLowerCase();
-
-    return this.projects.filter((project) => {
-      const matchesSearch =
-        project.name.toLowerCase().includes(normalizedSearchTerm) ||
-        project.customer.toLowerCase().includes(normalizedSearchTerm);
-
-      const matchesStatus = this.statusFilter === 'All' || project.status === this.statusFilter;
-
-      return matchesSearch && matchesStatus;
-    });
+  protected get selectedProject() {
+    return getSelectedProject(this.workspaceState);
   }
 
   protected startChapter(): void {
-    this.chapterStatus = 'Chapter 1 · In progress';
+    this.chapterStatus = 'Chapter 2 · In progress';
   }
 
   protected updateSearch(searchTerm: string): void {
-    this.searchTerm = searchTerm;
+    this.workspaceState.searchTerm = searchTerm;
   }
 
   protected updateStatusFilter(status: string): void {
-    this.statusFilter = status;
+    if (isProjectStatusFilter(status)) {
+      this.workspaceState.statusFilter = status;
+    }
   }
 
   protected resetFilters(): void {
-    this.searchTerm = '';
-    this.statusFilter = 'All';
+    this.workspaceState.searchTerm = '';
+    this.workspaceState.statusFilter = 'All';
   }
 
-  protected selectProject(project: Project): void {
-    this.selectedProject = project;
+  protected selectProject(projectId: ProjectId): void {
+    this.workspaceState.selectedProjectId = projectId;
   }
 
   protected clearSelection(): void {
-    this.selectedProject = null;
+    this.workspaceState.selectedProjectId = null;
   }
 }

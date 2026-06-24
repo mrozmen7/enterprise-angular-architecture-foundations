@@ -17,27 +17,29 @@ problem, and ends with code, tests, documentation, and an explicit architectural
 
 ## Current status
 
-**Chapter 1 complete — Application and Complexity**
+**Chapter 2 complete — Domain and State Modeling**
 
-The first Project Workspace feature is complete. Users can list customer projects, search by
-project or customer, filter by status, select a project, and inspect its details. The implementation
-intentionally begins in one component so its growing responsibilities and architectural pressure
-remain visible before separation patterns are introduced.
+The Project Workspace now uses an Angular-independent business model, explicit project status and
+priority values, runtime project invariants, identity-based selection, and a dedicated workspace
+state model.
 
-### Chapter 1 evidence
+### Current evidence
 
 - working project list, search, status filter, selection, detail, reset, and empty states;
-- explicit `Project` model and component state;
+- explicit Project, Customer, TeamMember, status, priority, and timeline models;
+- runtime validation for required business text and valid date ranges;
+- source state separated from derived filtered and selected project state;
+- strict TypeScript and Angular template compilation;
 - modern Angular template control flow with `@for`, `@if`, and `@empty`;
-- seven passing component tests;
-- documented responsibility map and complexity review.
+- twenty passing domain, state, and component tests;
+- documented domain vocabulary, dependency direction, and architecture decision.
 
 ## Learning path
 
 | Chapter | Focus                           | Enterprise outcome                                           |
 | ------- | ------------------------------- | ------------------------------------------------------------ |
 | 1 ✅    | Application and complexity      | Recognize responsibilities, state, and change pressure       |
-| 2       | Domain and state modeling       | Represent business rules and valid states explicitly         |
+| 2 ✅    | Domain and state modeling       | Represent business rules and valid states explicitly         |
 | 3       | Separation of concerns and DI   | Isolate UI, application, domain, and infrastructure concerns |
 | 4       | Immutable state transitions     | Make state changes predictable and traceable                 |
 | 5       | Signals and derived state       | Build scoped, reactive state with clear ownership            |
@@ -66,8 +68,11 @@ reasoning those tools depend on.
 - [OpsFlow product brief](docs/project-brief.md)
 - [Chapter 1 learning guide](docs/learning/section-01-overview.md)
 - [Chapter 1 completion review](docs/learning/section-01-completion.md)
+- [Chapter 2 learning guide](docs/learning/section-02-overview.md)
+- [Chapter 2 completion review](docs/learning/section-02-completion.md)
 - [CI/CD learning guide](docs/ci-cd.md)
 - [Architecture Decision Records](docs/adr/README.md)
+- [ADR 0001 — Model the Project Domain Explicitly](docs/adr/0001-model-project-domain-explicitly.md)
 - [Security baseline](docs/security-baseline.md)
 - [Tooling notes](docs/tooling-notes.md)
 

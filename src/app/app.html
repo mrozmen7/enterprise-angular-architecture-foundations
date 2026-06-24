@@ -78,7 +78,7 @@
               (change)="updateStatusFilter(statusSelect.value)"
             >
               @for (status of statusOptions; track status) {
-                <option [value]="status">{{ status }}</option>
+                <option [attr.value]="status">{{ status }}</option>
               }
             </select>
           </label>
@@ -96,7 +96,9 @@
             >
               <div class="project-card__heading">
                 <div>
-                  <p class="project-card__customer">{{ project.customer }}</p>
+                  <p class="project-card__customer">
+                    {{ project.customer.name }} · {{ project.customer.industry }}
+                  </p>
                   <h3>{{ project.name }}</h3>
                 </div>
                 <span class="project-status">{{ project.status }}</span>
@@ -104,7 +106,16 @@
 
               <p>{{ project.summary }}</p>
 
-              <button class="button button--primary" type="button" (click)="selectProject(project)">
+              <div class="project-card__meta">
+                <span>Priority: {{ project.priority }}</span>
+                <span>Target: {{ project.targetDate }}</span>
+              </div>
+
+              <button
+                class="button button--primary"
+                type="button"
+                (click)="selectProject(project.id)"
+              >
                 View details
               </button>
             </li>
@@ -125,15 +136,23 @@
           <dl>
             <div>
               <dt>Customer</dt>
-              <dd>{{ project.customer }}</dd>
+              <dd>{{ project.customer.name }}</dd>
             </div>
             <div>
               <dt>Status</dt>
               <dd>{{ project.status }}</dd>
             </div>
             <div>
+              <dt>Priority</dt>
+              <dd>{{ project.priority }}</dd>
+            </div>
+            <div>
               <dt>Owner</dt>
-              <dd>{{ project.owner }}</dd>
+              <dd>{{ project.owner.name }} · {{ project.owner.role }}</dd>
+            </div>
+            <div>
+              <dt>Timeline</dt>
+              <dd>{{ project.startDate }} → {{ project.targetDate }}</dd>
             </div>
           </dl>
 

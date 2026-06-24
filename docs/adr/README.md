@@ -3,6 +3,10 @@
 Architecture Decision Records (ADRs) capture why a significant decision was made and what trade-offs
 it introduces. They prevent architecture from becoming undocumented team folklore.
 
+## Decision index
+
+- [ADR 0001 — Model the Project Domain Explicitly](0001-model-project-domain-explicitly.md)
+
 ## File naming
 
 ```text
