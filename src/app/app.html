@@ -1,0 +1,153 @@
+<main class="course-shell">
+  <header class="hero">
+    <p class="eyebrow">Enterprise Angular Architecture Foundations</p>
+
+    <h1>{{ productName }}</h1>
+
+    <p class="hero__summary">
+      A project operations platform that evolves through real company requirements and explicit
+      architectural decisions.
+    </p>
+    <div class="chapter-actions">
+      <span class="status">{{ chapterStatus }}</span>
+      <button class="button button--light" type="button" (click)="startChapter()">
+        Start chapter
+      </button>
+    </div>
+  </header>
+
+  <section class="overview" aria-labelledby="overview-title">
+    <div>
+      <p class="section-label">Learning model</p>
+      <h2 id="overview-title">From a simple feature to a reference architecture</h2>
+    </div>
+
+    <ol class="journey">
+      <li>
+        <span>01</span>
+        <div>
+          <h3>Business requirement</h3>
+          <p>Start with a realistic request from the OpsFlow product team.</p>
+        </div>
+      </li>
+      <li>
+        <span>02</span>
+        <div>
+          <h3>Engineering pressure</h3>
+          <p>Observe what becomes difficult as the requirement grows.</p>
+        </div>
+      </li>
+      <li>
+        <span>03</span>
+        <div>
+          <h3>Architectural decision</h3>
+          <p>Apply the smallest justified pattern and record the trade-off.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+  <section class="projects" aria-labelledby="projects-title">
+    <div class="section-heading">
+      <div>
+        <p class="section-label">Project workspace</p>
+        <h2 id="projects-title">Customer projects</h2>
+      </div>
+
+      <p class="result-count">{{ filteredProjects.length }} projects found</p>
+    </div>
+
+    <div class="workspace">
+      <div>
+        <div class="filters" aria-label="Project filters">
+          <label>
+            <span>Search by project or customer</span>
+            <input
+              #searchInput
+              type="search"
+              placeholder="Try Northstar or Portal"
+              [value]="searchTerm"
+              (input)="updateSearch(searchInput.value)"
+            />
+          </label>
+
+          <label>
+            <span>Project status</span>
+            <select
+              #statusSelect
+              [value]="statusFilter"
+              (change)="updateStatusFilter(statusSelect.value)"
+            >
+              @for (status of statusOptions; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </label>
+
+          <button class="button button--secondary" type="button" (click)="resetFilters()">
+            Reset filters
+          </button>
+        </div>
+
+        <ul class="project-list">
+          @for (project of filteredProjects; track project.id) {
+            <li
+              class="project-card"
+              [class.project-card--selected]="selectedProject?.id === project.id"
+            >
+              <div class="project-card__heading">
+                <div>
+                  <p class="project-card__customer">{{ project.customer }}</p>
+                  <h3>{{ project.name }}</h3>
+                </div>
+                <span class="project-status">{{ project.status }}</span>
+              </div>
+
+              <p>{{ project.summary }}</p>
+
+              <button class="button button--primary" type="button" (click)="selectProject(project)">
+                View details
+              </button>
+            </li>
+          } @empty {
+            <li class="empty-state">
+              <h3>No matching projects</h3>
+              <p>Change the search text or status filter and try again.</p>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <aside class="project-detail" aria-live="polite">
+        @if (selectedProject; as project) {
+          <p class="section-label">Selected project</p>
+          <h2>{{ project.name }}</h2>
+
+          <dl>
+            <div>
+              <dt>Customer</dt>
+              <dd>{{ project.customer }}</dd>
+            </div>
+            <div>
+              <dt>Status</dt>
+              <dd>{{ project.status }}</dd>
+            </div>
+            <div>
+              <dt>Owner</dt>
+              <dd>{{ project.owner }}</dd>
+            </div>
+          </dl>
+
+          <p>{{ project.summary }}</p>
+
+          <button class="button button--secondary" type="button" (click)="clearSelection()">
+            Close details
+          </button>
+        } @else {
+          <p class="section-label">Project detail</p>
+          <h2>Select a project</h2>
+          <p>Choose “View details” to inspect the project, customer, status, and owner.</p>
+        }
+      </aside>
+    </div>
+  </section>
+</main>
