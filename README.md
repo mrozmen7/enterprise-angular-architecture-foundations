@@ -1,5 +1,7 @@
 # Enterprise Angular Architecture Foundations — OpsFlow
 
+[![CI](https://github.com/mrozmen7/enterprise-angular-architecture-foundations/actions/workflows/ci.yml/badge.svg)](https://github.com/mrozmen7/enterprise-angular-architecture-foundations/actions/workflows/ci.yml)
+
 > Building a maintainable Angular 22 application from first principles through
 > real enterprise requirements, architectural trade-offs, and production-minded practices.
 
@@ -64,6 +66,7 @@ reasoning those tools depend on.
 - [OpsFlow product brief](docs/project-brief.md)
 - [Chapter 1 learning guide](docs/learning/section-01-overview.md)
 - [Chapter 1 completion review](docs/learning/section-01-completion.md)
+- [CI/CD learning guide](docs/ci-cd.md)
 - [Architecture Decision Records](docs/adr/README.md)
 - [Security baseline](docs/security-baseline.md)
 - [Tooling notes](docs/tooling-notes.md)
