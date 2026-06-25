@@ -1,7 +1,7 @@
 import { InjectionToken, Injector, makeEnvironmentProviders } from '@angular/core';
 import type { EnvironmentProviders, FactoryProvider } from '@angular/core';
 import { ProjectWorkspaceStore } from './application/project-workspace.store';
-import { LocalProjectRepository } from './infrastructure/local-project.repository';
+import { HttpProjectRepository } from './infrastructure/http-project.repository';
 import type { ProjectRepository } from './ports/project-repository';
 
 export const PROJECT_REPOSITORY = new InjectionToken<ProjectRepository>('PROJECT_REPOSITORY');
@@ -17,7 +17,7 @@ export function provideProjects(): EnvironmentProviders {
   return makeEnvironmentProviders([
     {
       provide: PROJECT_REPOSITORY,
-      useClass: LocalProjectRepository,
+      useClass: HttpProjectRepository,
     },
   ]);
 }

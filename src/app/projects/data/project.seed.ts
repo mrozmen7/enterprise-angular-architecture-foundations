@@ -4,6 +4,7 @@ import type { Project } from '../domain/project';
 export const PROJECT_SEED: readonly Project[] = [
   createProject({
     id: 'project-payment-platform-migration',
+    version: 1,
     name: 'Payment Platform Migration',
     customer: {
       id: 'customer-northstar-bank',
@@ -23,6 +24,7 @@ export const PROJECT_SEED: readonly Project[] = [
   }),
   createProject({
     id: 'project-customer-portal-redesign',
+    version: 1,
     name: 'Customer Portal Redesign',
     customer: {
       id: 'customer-acme-industries',
@@ -42,6 +44,7 @@ export const PROJECT_SEED: readonly Project[] = [
   }),
   createProject({
     id: 'project-compliance-reporting-automation',
+    version: 1,
     name: 'Compliance Reporting Automation',
     customer: {
       id: 'customer-helvetia-finance',

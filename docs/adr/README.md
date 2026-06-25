@@ -10,6 +10,7 @@ it introduces. They prevent architecture from becoming undocumented team folklor
 - [ADR 0003 — Use Immutable Workspace Transitions](0003-use-immutable-workspace-transitions.md)
 - [ADR 0004 — Use Signals for Workspace Reactivity](0004-use-signals-for-workspace-reactivity.md)
 - [ADR 0005 — Encode Concurrency Policies with RxJS](0005-encode-concurrency-with-rxjs.md)
+- [ADR 0006 — Treat Server State as Versioned, Fallible Data](0006-treat-server-state-as-versioned-data.md)
 
 ## File naming
 

@@ -6,11 +6,13 @@ import {
   concat,
   concatMap,
   debounceTime,
+  defer,
   distinctUntilChanged,
   exhaustMap,
   forkJoin,
   map,
   of,
+  startWith,
   Subject,
   switchMap,
   tap,
@@ -19,7 +21,12 @@ import type { Observable } from 'rxjs';
 import type { Project, ProjectId } from '../domain/project';
 import { isProjectPriority, PROJECT_PRIORITIES } from '../domain/project-priority';
 import type { ProjectPriority } from '../domain/project-priority';
-import type { ProjectRepository } from '../ports/project-repository';
+import {
+  ProjectConflictError,
+  type ProjectCollectionSnapshot,
+  type ProjectLoadPolicy,
+  type ProjectRepository,
+} from '../ports/project-repository';
 import type { ProjectBriefing } from './project-briefing';
 import type { ProjectWorkspaceCommand } from './project-workspace.command';
 import { reduceProjectWorkspace } from './project-workspace.reducer';
@@ -43,12 +50,20 @@ type PrioritySaveRequest = {
   readonly priority: ProjectPriority;
 };
 
+const EMPTY_PROJECT_SNAPSHOT: ProjectCollectionSnapshot = Object.freeze({
+  projects: Object.freeze([]),
+  source: 'network',
+  fetchedAt: 0,
+});
+
 export class ProjectWorkspaceStore {
   private readonly stateSource: WritableSignal<ProjectWorkspaceState>;
 
   private readonly prioritySaveRequests = new Subject<PrioritySaveRequest>();
 
   private readonly briefingRequests = new Subject<ProjectId>();
+
+  private readonly projectRefreshRequests = new Subject<ProjectLoadPolicy>();
 
   readonly state: Signal<ProjectWorkspaceState>;
 
@@ -60,17 +75,23 @@ export class ProjectWorkspaceStore {
 
   readonly searchRequest: Signal<RequestState<readonly Project[]>>;
 
+  readonly projectsRequest: Signal<RequestState<ProjectCollectionSnapshot>>;
+
   readonly prioritySaveRequest: Signal<RequestState<Project | null>>;
 
   readonly briefingRequest: Signal<RequestState<ProjectBriefing | null>>;
 
   readonly filteredProjects = computed(() => {
-    const matchingProjectIds = new Set(this.searchRequest().data.map((project) => project.id));
+    const normalizedSearchTerm = this.searchTerm().trim();
+    const matchingProjectIds =
+      normalizedSearchTerm.length === 0
+        ? null
+        : new Set(this.searchRequest().data.map((project) => project.id));
     const statusFilter = this.statusFilter();
 
     return this.state().projects.filter(
       (project) =>
-        matchingProjectIds.has(project.id) &&
+        (matchingProjectIds === null || matchingProjectIds.has(project.id)) &&
         (statusFilter === 'All' || project.status === statusFilter),
     );
   });
@@ -82,6 +103,17 @@ export class ProjectWorkspaceStore {
   );
 
   readonly isSearching = computed(() => this.searchRequest().status === 'loading');
+
+  readonly isLoadingProjects = computed(() => this.projectsRequest().status === 'loading');
+
+  readonly projectsLoadError = computed(() => {
+    const request = this.projectsRequest();
+    return request.status === 'error' ? request.message : null;
+  });
+
+  readonly projectDataSource = computed(() => this.projectsRequest().data.source);
+
+  readonly lastSynchronizedAt = computed(() => this.projectsRequest().data.fetchedAt);
 
   readonly searchError = computed(() => {
     const request = this.searchRequest();
@@ -111,12 +143,16 @@ export class ProjectWorkspaceStore {
     private readonly repository: ProjectRepository,
     injector: Injector,
   ) {
-    const initialProjects = repository.getAll();
-    this.stateSource = signal(createProjectWorkspaceState(initialProjects));
+    this.stateSource = signal(createProjectWorkspaceState([]));
     this.state = this.stateSource.asReadonly();
 
-    this.searchRequest = toSignal(this.createSearchRequest(initialProjects), {
-      initialValue: idleRequest(initialProjects),
+    this.projectsRequest = toSignal(this.createProjectsRequest(), {
+      initialValue: idleRequest(EMPTY_PROJECT_SNAPSHOT),
+      injector,
+    });
+
+    this.searchRequest = toSignal(this.createSearchRequest(), {
+      initialValue: idleRequest<readonly Project[]>([]),
       injector,
     });
 
@@ -159,6 +195,10 @@ export class ProjectWorkspaceStore {
     this.dispatch({ type: 'filters-reset' });
   }
 
+  refreshProjects(): void {
+    this.projectRefreshRequests.next('network-only');
+  }
+
   selectProject(projectId: ProjectId): void {
     this.dispatch({
       type: 'project-selected',
@@ -183,16 +223,43 @@ export class ProjectWorkspaceStore {
     this.dispatch({ type: 'selection-cleared' });
   }
 
-  private createSearchRequest(
-    initialProjects: readonly Project[],
-  ): Observable<RequestState<readonly Project[]>> {
-    let latestProjects = initialProjects;
+  private createProjectsRequest(): Observable<RequestState<ProjectCollectionSnapshot>> {
+    let latestSnapshot = EMPTY_PROJECT_SNAPSHOT;
+
+    return this.projectRefreshRequests.pipe(
+      startWith<ProjectLoadPolicy>('cache-first'),
+      switchMap((policy) =>
+        concat(
+          of(loadingRequest(latestSnapshot)),
+          this.repository.loadAll(policy).pipe(
+            tap((snapshot) => {
+              latestSnapshot = snapshot;
+              this.dispatch({
+                type: 'projects-synchronized',
+                projects: snapshot.projects,
+              });
+            }),
+            map((snapshot) => successRequest(snapshot)),
+            catchError((error: unknown) => of(failedRequest(latestSnapshot, error))),
+          ),
+        ),
+      ),
+    );
+  }
+
+  private createSearchRequest(): Observable<RequestState<readonly Project[]>> {
+    let latestProjects: readonly Project[] = [];
 
     return toObservable(this.searchTerm).pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap((query) =>
-        concat(
+      switchMap((query) => {
+        if (query.trim().length === 0) {
+          latestProjects = [];
+          return of(successRequest(latestProjects));
+        }
+
+        return concat(
           of(loadingRequest(latestProjects)),
           this.repository.search(query).pipe(
             tap((projects) => {
@@ -201,28 +268,56 @@ export class ProjectWorkspaceStore {
             map((projects) => successRequest(projects)),
             catchError((error: unknown) => of(failedRequest(latestProjects, error))),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
   private createPrioritySaveRequest(): Observable<RequestState<Project | null>> {
     return this.prioritySaveRequests.pipe(
       concatMap((request) =>
-        concat(
-          of(loadingRequest<Project | null>(null)),
-          this.repository.savePriority(request.projectId, request.priority).pipe(
-            tap((project) =>
-              this.dispatch({
-                type: 'project-priority-changed',
-                projectId: project.id,
-                priority: project.priority,
-              }),
-            ),
-            map((project) => successRequest<Project | null>(project)),
-            catchError((error: unknown) => of(failedRequest<Project | null>(null, error))),
-          ),
-        ),
+        defer(() => {
+          const previousProject =
+            this.state().projects.find((project) => project.id === request.projectId) ?? null;
+
+          if (previousProject === null) {
+            return of(
+              failedRequest<Project | null>(null, new Error('The project could not be found.')),
+            );
+          }
+
+          this.dispatch({
+            type: 'project-priority-changed',
+            projectId: request.projectId,
+            priority: request.priority,
+          });
+
+          return concat(
+            of(loadingRequest<Project | null>(previousProject)),
+            this.repository
+              .savePriority(request.projectId, request.priority, previousProject.version)
+              .pipe(
+                tap((project) =>
+                  this.dispatch({
+                    type: 'project-synchronized',
+                    project,
+                  }),
+                ),
+                map((project) => successRequest<Project | null>(project)),
+                catchError((error: unknown) => {
+                  const restoredProject =
+                    error instanceof ProjectConflictError ? error.serverProject : previousProject;
+
+                  this.dispatch({
+                    type: 'project-synchronized',
+                    project: restoredProject,
+                  });
+
+                  return of(failedRequest<Project | null>(restoredProject, error));
+                }),
+              ),
+          );
+        }),
       ),
     );
   }

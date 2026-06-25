@@ -10,6 +10,23 @@
       @if (workspace.hasActiveFilters()) {
         <span class="active-filter">Filtered view</span>
       }
+      @if (workspace.isLoadingProjects()) {
+        <span class="sync-state">Synchronizing with the server…</span>
+      } @else if (workspace.projectsLoadError(); as error) {
+        <span class="request-error">{{ error }}</span>
+      } @else if (workspace.lastSynchronizedAt() > 0) {
+        <span class="sync-state">
+          {{ workspace.projectDataSource() === 'cache' ? 'Fresh cache' : 'Server synchronized' }}
+        </span>
+      }
+      <button
+        class="button button--secondary"
+        type="button"
+        [disabled]="workspace.isLoadingProjects()"
+        (click)="workspace.refreshProjects()"
+      >
+        Refresh server data
+      </button>
     </div>
   </div>
 
@@ -41,7 +58,9 @@
             (change)="workspace.updateStatusFilter(statusSelect.value)"
           >
             @for (status of workspace.statusOptions; track status) {
-              <option [attr.value]="status">{{ status }}</option>
+              <option [value]="status" [selected]="status === workspace.statusFilter()">
+                {{ status }}
+              </option>
             }
           </select>
         </label>
@@ -116,7 +135,9 @@
                 (change)="workspace.updateProjectPriority(project.id, prioritySelect.value)"
               >
                 @for (priority of workspace.priorityOptions; track priority) {
-                  <option [attr.value]="priority">{{ priority }}</option>
+                  <option [value]="priority" [selected]="priority === project.priority">
+                    {{ priority }}
+                  </option>
                 }
               </select>
               @if (workspace.isSavingPriority()) {
@@ -126,6 +147,10 @@
                 <small class="request-error">{{ error }}</small>
               }
             </dd>
+          </div>
+          <div>
+            <dt>Server version</dt>
+            <dd>v{{ project.version }}</dd>
           </div>
           <div>
             <dt>Owner</dt>

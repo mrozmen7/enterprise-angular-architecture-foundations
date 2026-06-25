@@ -57,6 +57,36 @@ export function reduceProjectWorkspace(
       });
     }
 
+    case 'projects-synchronized': {
+      const selectedProjectStillExists =
+        state.selectedProjectId === null ||
+        command.projects.some((project) => project.id === state.selectedProjectId);
+
+      return freezeState({
+        ...state,
+        projects: Object.freeze([...command.projects]),
+        selectedProjectId: selectedProjectStillExists ? state.selectedProjectId : null,
+      });
+    }
+
+    case 'project-synchronized': {
+      const projectIndex = state.projects.findIndex(
+        (candidate) => candidate.id === command.project.id,
+      );
+
+      if (projectIndex === -1 || state.projects[projectIndex] === command.project) {
+        return state;
+      }
+
+      const projects = [...state.projects];
+      projects[projectIndex] = command.project;
+
+      return freezeState({
+        ...state,
+        projects: Object.freeze(projects),
+      });
+    }
+
     case 'filters-reset':
       return state.searchTerm === '' && state.statusFilter === 'All'
         ? state

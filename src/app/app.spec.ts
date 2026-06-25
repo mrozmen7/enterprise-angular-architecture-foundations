@@ -1,12 +1,22 @@
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import {
+  projectApiMockInterceptor,
+  resetProjectApiMock,
+} from './projects/infrastructure/project-api.mock';
 import { provideProjects } from './projects/project.providers';
 
 describe('App shell', () => {
   beforeEach(async () => {
+    resetProjectApiMock();
+
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideProjects()],
+      providers: [
+        provideHttpClient(withInterceptors([projectApiMockInterceptor])),
+        provideProjects(),
+      ],
     }).compileComponents();
   });
 

@@ -100,6 +100,38 @@ describe('Project workspace reducer', () => {
     expect(nextState).toBe(state);
   });
 
+  it('should replace the server collection and clear a missing selection', () => {
+    const selectedState = reduceProjectWorkspace(createProjectWorkspaceState(PROJECT_SEED), {
+      type: 'project-selected',
+      projectId: PROJECT_SEED[2]!.id,
+    });
+
+    const synchronizedState = reduceProjectWorkspace(selectedState, {
+      type: 'projects-synchronized',
+      projects: [PROJECT_SEED[0]!],
+    });
+
+    expect(synchronizedState.projects).toEqual([PROJECT_SEED[0]!]);
+    expect(synchronizedState.selectedProjectId).toBeNull();
+  });
+
+  it('should reconcile one project with the complete server representation', () => {
+    const state = createProjectWorkspaceState(PROJECT_SEED);
+    const serverProject = {
+      ...PROJECT_SEED[0]!,
+      version: 2,
+      priority: 'Low' as const,
+    };
+
+    const synchronizedState = reduceProjectWorkspace(state, {
+      type: 'project-synchronized',
+      project: serverProject,
+    });
+
+    expect(synchronizedState.projects[0]).toBe(serverProject);
+    expect(synchronizedState.projects[1]).toBe(state.projects[1]);
+  });
+
   it('should freeze every state returned by the reducer', () => {
     const state = createProjectWorkspaceState(PROJECT_SEED);
     const nextState = reduceProjectWorkspace(state, {

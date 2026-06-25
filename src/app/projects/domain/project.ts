@@ -8,6 +8,7 @@ export type IsoDate = `${number}-${number}-${number}`;
 
 export type Project = {
   readonly id: ProjectId;
+  readonly version: number;
   readonly name: string;
   readonly customer: Customer;
   readonly owner: TeamMember;
@@ -57,6 +58,11 @@ export function validateProject(project: Project): readonly string[] {
   const issues: string[] = [];
 
   validateRequiredText(project.id, 'Project id', issues);
+
+  if (!Number.isInteger(project.version) || project.version < 1) {
+    issues.push('Project version must be a positive integer.');
+  }
+
   validateRequiredText(project.name, 'Project name', issues);
   validateRequiredText(project.summary, 'Project summary', issues);
   validateRequiredText(project.customer.id, 'Customer id', issues);

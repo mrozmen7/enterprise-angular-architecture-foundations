@@ -20,6 +20,7 @@ const owner: TeamMember = {
 function buildProject(overrides: Partial<Project> = {}): Project {
   return {
     id: 'project-payment-platform-migration',
+    version: 1,
     name: 'Payment Platform Migration',
     customer,
     owner,
@@ -67,6 +68,12 @@ describe('Project domain model', () => {
         }),
       ),
     ).toThrowError('Target date cannot be before start date.');
+  });
+
+  it('should reject an invalid server version', () => {
+    expect(() => createProject(buildProject({ version: 0 }))).toThrowError(
+      'Project version must be a positive integer.',
+    );
   });
 
   it('should recognize only supported project statuses at runtime', () => {

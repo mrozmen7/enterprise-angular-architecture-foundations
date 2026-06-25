@@ -17,11 +17,11 @@ problem, and ends with code, tests, documentation, and an explicit architectural
 
 ## Current status
 
-**Chapter 6 complete — RxJS and Concurrency**
+**Chapter 7 complete — Server and Distributed State**
 
-Project Workspace now coordinates debounced latest-only search, ordered priority saves,
-duplicate-safe briefing generation, parallel work, and recoverable request errors with RxJS while
-Signals continue to expose current UI state.
+Project Workspace now crosses a validated Angular HTTP boundary, applies explicit cache policies,
+keeps data visible during refreshes, performs optimistic priority updates, rolls back failures, and
+reconciles concurrent-user conflicts with versioned server truth.
 
 ### Current evidence
 
@@ -41,9 +41,16 @@ Signals continue to expose current UI state.
 - Signal-to-Observable search with debounce, deduplication, and stale request cancellation;
 - sequential priority persistence and duplicate-safe parallel briefing workflows;
 - recoverable idle/loading/success/error request state;
+- standalone Angular `HttpClient` with a replaceable HTTP repository adapter;
+- API DTOs validated at runtime before entering the domain;
+- explicit cache-first and network-only loading policies;
+- optimistic priority updates with ordinary-error rollback;
+- project versions and HTTP 409 conflict reconciliation;
+- background server refresh that preserves current data;
 - strict TypeScript and Angular template compilation;
 - modern Angular template control flow with `@for`, `@if`, and `@empty`;
-- forty-two passing domain, reducer, RxJS-store, state, infrastructure, presentation, and shell tests;
+- fifty-five passing domain, reducer, RxJS-store, HTTP, state, infrastructure, presentation, and shell
+  tests;
 - documented dependency direction, transition table, reactive ownership, concurrency policy, and
   architecture decisions.
 
@@ -57,7 +64,7 @@ Signals continue to expose current UI state.
 | 4 ✅    | Immutable state transitions     | Make state changes predictable and traceable                 |
 | 5 ✅    | Signals and derived state       | Build scoped, reactive state with clear ownership            |
 | 6 ✅    | RxJS and concurrency            | Control cancellation, ordering, parallelism, and failures    |
-| 7       | Server and distributed state    | Handle optimistic updates, stale data, and conflicts         |
+| 7 ✅    | Server and distributed state    | Handle optimistic updates, stale data, and conflicts         |
 | 8       | Testing and architecture review | Verify behavior and publish the reference architecture       |
 
 ## Technology baseline
@@ -91,6 +98,8 @@ reasoning those tools depend on.
 - [Chapter 5 completion review](docs/learning/section-05-completion.md)
 - [Chapter 6 learning guide](docs/learning/section-06-overview.md)
 - [Chapter 6 completion review](docs/learning/section-06-completion.md)
+- [Chapter 7 learning guide](docs/learning/section-07-overview.md)
+- [Chapter 7 completion review](docs/learning/section-07-completion.md)
 - [CI/CD learning guide](docs/ci-cd.md)
 - [Architecture Decision Records](docs/adr/README.md)
 - [ADR 0001 — Model the Project Domain Explicitly](docs/adr/0001-model-project-domain-explicitly.md)
@@ -98,6 +107,7 @@ reasoning those tools depend on.
 - [ADR 0003 — Use Immutable Workspace Transitions](docs/adr/0003-use-immutable-workspace-transitions.md)
 - [ADR 0004 — Use Signals for Workspace Reactivity](docs/adr/0004-use-signals-for-workspace-reactivity.md)
 - [ADR 0005 — Encode Concurrency Policies with RxJS](docs/adr/0005-encode-concurrency-with-rxjs.md)
+- [ADR 0006 — Treat Server State as Versioned, Fallible Data](docs/adr/0006-treat-server-state-as-versioned-data.md)
 - [Security baseline](docs/security-baseline.md)
 - [Tooling notes](docs/tooling-notes.md)
 

@@ -10,7 +10,12 @@ describe('ProjectWorkspace presentation', () => {
   let repositoryProjects = PROJECT_SEED;
 
   const fakeRepository: ProjectRepository = {
-    getAll: () => repositoryProjects,
+    loadAll: (policy = 'cache-first') =>
+      of({
+        projects: repositoryProjects,
+        source: policy === 'network-only' ? 'network' : 'cache',
+        fetchedAt: Date.now(),
+      }),
     search: (query) =>
       of(
         repositoryProjects.filter(
@@ -19,10 +24,11 @@ describe('ProjectWorkspace presentation', () => {
             project.customer.name.toLowerCase().includes(query.toLowerCase()),
         ),
       ),
-    savePriority: (projectId, priority: ProjectPriority) =>
+    savePriority: (projectId, priority: ProjectPriority, expectedVersion) =>
       of({
         ...repositoryProjects.find((project) => project.id === projectId)!,
         priority,
+        version: expectedVersion + 1,
       }),
     loadRiskSummary: () => of('Risk summary'),
     loadActivitySummary: () => of('Activity summary'),
@@ -114,6 +120,21 @@ describe('ProjectWorkspace presentation', () => {
 
     expect(compiled.querySelector('.project-card')?.textContent).toContain('Priority: Low');
     expect(prioritySelect.value).toBe('Low');
+    expect(compiled.querySelector('.project-detail')?.textContent).toContain('v2');
+  });
+
+  it('should explicitly refresh server data', () => {
+    const fixture = TestBed.createComponent(ProjectWorkspace);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const refreshButton = Array.from(compiled.querySelectorAll<HTMLButtonElement>('button')).find(
+      (button) => button.textContent?.includes('Refresh server data'),
+    );
+
+    refreshButton?.click();
+    fixture.detectChanges();
+
+    expect(compiled.textContent).toContain('Server synchronized');
   });
 
   it('should search projects by customer name', () => {
