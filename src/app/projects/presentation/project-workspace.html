@@ -1,11 +1,15 @@
-<section class="projects" aria-labelledby="projects-title">
+<section
+  class="projects"
+  aria-labelledby="projects-title"
+  [attr.aria-busy]="workspace.isLoadingProjects()"
+>
   <div class="section-heading">
     <div>
       <p class="section-label">Project workspace</p>
       <h2 id="projects-title">Customer projects</h2>
     </div>
 
-    <div class="result-summary">
+    <div class="result-summary" role="status" aria-live="polite">
       <p class="result-count">{{ workspace.projectCount() }} projects found</p>
       @if (workspace.hasActiveFilters()) {
         <span class="active-filter">Filtered view</span>
@@ -13,7 +17,7 @@
       @if (workspace.isLoadingProjects()) {
         <span class="sync-state">Synchronizing with the server…</span>
       } @else if (workspace.projectsLoadError(); as error) {
-        <span class="request-error">{{ error }}</span>
+        <span class="request-error" role="alert">{{ error }}</span>
       } @else if (workspace.lastSynchronizedAt() > 0) {
         <span class="sync-state">
           {{ workspace.projectDataSource() === 'cache' ? 'Fresh cache' : 'Server synchronized' }}
@@ -43,10 +47,12 @@
             (input)="workspace.updateSearch(searchInput.value)"
           />
           @if (workspace.isSearching()) {
-            <small class="request-note">Searching the project directory…</small>
+            <small class="request-note" role="status">Searching the project directory…</small>
           }
           @if (workspace.searchError(); as error) {
-            <small class="request-error">{{ error }} Showing the last successful result.</small>
+            <small class="request-error" role="alert">
+              {{ error }} Showing the last successful result.
+            </small>
           }
         </label>
 
@@ -90,12 +96,16 @@
 
             <div class="project-card__meta">
               <span>Priority: {{ project.priority }}</span>
-              <span>Target: {{ project.targetDate }}</span>
+              <span>
+                Target:
+                <time [attr.datetime]="project.targetDate">{{ project.targetDate }}</time>
+              </span>
             </div>
 
             <button
               class="button button--primary"
               type="button"
+              [attr.aria-label]="'View details for ' + project.name"
               (click)="workspace.selectProject(project.id)"
             >
               View details
@@ -141,10 +151,10 @@
                 }
               </select>
               @if (workspace.isSavingPriority()) {
-                <small class="request-note">Saving queued priority updates…</small>
+                <small class="request-note" role="status">Saving queued priority updates…</small>
               }
               @if (workspace.prioritySaveError(); as error) {
-                <small class="request-error">{{ error }}</small>
+                <small class="request-error" role="alert">{{ error }}</small>
               }
             </dd>
           </div>
@@ -158,7 +168,11 @@
           </div>
           <div>
             <dt>Timeline</dt>
-            <dd>{{ project.startDate }} → {{ project.targetDate }}</dd>
+            <dd>
+              <time [attr.datetime]="project.startDate">{{ project.startDate }}</time>
+              →
+              <time [attr.datetime]="project.targetDate">{{ project.targetDate }}</time>
+            </dd>
           </div>
         </dl>
 
@@ -190,7 +204,7 @@
           </section>
         }
         @if (workspace.briefingError(); as error) {
-          <p class="request-error">{{ error }}</p>
+          <p class="request-error" role="alert">{{ error }}</p>
         }
       } @else {
         <p class="section-label">Project detail</p>

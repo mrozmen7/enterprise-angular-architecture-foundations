@@ -1,6 +1,6 @@
 {
   "name": "enterprise-angular-architecture-foundations",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,8 +8,10 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:ci": "ng test --watch=false",
+    "architecture:check": "node scripts/verify-architecture.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "build:pages": "ng build --base-href /enterprise-angular-architecture-foundations/"
   },
   "private": true,
   "engines": {

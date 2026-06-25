@@ -14,6 +14,7 @@ GitHub event
   -> install Node.js from .nvmrc
   -> install the locked dependencies with npm ci
   -> check formatting
+  -> verify architecture boundaries
   -> run tests
   -> build the production bundle
   -> report success or failure
@@ -51,21 +52,22 @@ The workflow runs when:
 - The workflow receives read-only repository content permission.
 - A ten-minute timeout prevents a stuck job from running indefinitely.
 - Concurrency cancels an outdated run when a newer commit for the same branch starts.
-- Deployment credentials are not required because this workflow performs CI, not CD.
+- Deployment credentials are not stored in the repository.
 
 ## CI versus CD
 
-CI currently protects code quality:
+CI protects code quality:
 
 ```text
-change -> format -> test -> build -> verified commit
+change -> format -> architecture -> test -> build -> verified commit
 ```
 
-CD will be introduced after the project has a justified deployment target:
+CD publishes the static reference application:
 
 ```text
-verified commit -> build artifact -> protected environment -> deployment
+verified main -> Pages build artifact -> github-pages environment -> public HTTPS URL
 ```
 
-Production deployment will use an explicit environment and will not place credentials in the
-repository.
+The deployment workflow is located at `.github/workflows/deploy-pages.yml`. It uses the permissions
+required by GitHub Pages, uploads one immutable artifact, and deploys it through the explicit
+`github-pages` environment.

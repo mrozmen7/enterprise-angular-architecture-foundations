@@ -38,6 +38,9 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
+      - name: Verify architecture boundaries
+        run: npm run architecture:check
+
       - name: Run tests
         run: npm run test:ci
 

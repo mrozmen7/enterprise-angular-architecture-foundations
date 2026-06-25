@@ -57,6 +57,24 @@ describe('ProjectWorkspace presentation', () => {
     expect(compiled.querySelector('.result-count')?.textContent).toContain('3 projects found');
   });
 
+  it('should expose accessible status, controls, and project-specific action names', () => {
+    const fixture = TestBed.createComponent(ProjectWorkspace);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const section = compiled.querySelector<HTMLElement>('.projects');
+    const detailButtons = compiled.querySelectorAll<HTMLButtonElement>(
+      '.project-card .button--primary',
+    );
+
+    expect(section?.getAttribute('aria-labelledby')).toBe('projects-title');
+    expect(section?.getAttribute('aria-busy')).toBe('false');
+    expect(compiled.querySelector('.result-summary')?.getAttribute('role')).toBe('status');
+    expect(detailButtons[0]?.getAttribute('aria-label')).toBe(
+      'View details for Payment Platform Migration',
+    );
+    expect(compiled.querySelectorAll('time')).toHaveLength(3);
+  });
+
   it('should work unchanged when DI supplies a different repository result', () => {
     repositoryProjects = [PROJECT_SEED[1]!];
     const fixture = TestBed.createComponent(ProjectWorkspace);

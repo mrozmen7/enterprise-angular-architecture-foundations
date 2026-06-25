@@ -1,6 +1,6 @@
 # Security Baseline
 
-Baseline date: **2026-06-21**
+Baseline date: **2026-06-25**
 
 ## Runtime dependencies
 

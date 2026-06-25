@@ -32,6 +32,15 @@ describe('App shell', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(compiled.querySelector('h1')?.textContent).toContain('OpsFlow');
+    expect(compiled.querySelector('.status')?.textContent).toContain('Reference architecture');
+    expect(
+      compiled.querySelector<HTMLAnchorElement>('a[href="#projects-title"]')?.textContent,
+    ).toContain('Skip to project workspace');
+    expect(
+      compiled.querySelector<HTMLAnchorElement>(
+        'a[href="https://github.com/mrozmen7/enterprise-angular-architecture-foundations"]',
+      )?.rel,
+    ).toContain('noreferrer');
     expect(compiled.querySelector('app-project-workspace')).toBeTruthy();
     expect(compiled.querySelectorAll('.project-card')).toHaveLength(3);
   });

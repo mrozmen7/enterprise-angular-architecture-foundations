@@ -1,3 +1,5 @@
+<a class="skip-link" href="#projects-title">Skip to project workspace</a>
+
 <main class="course-shell">
   <header class="hero">
     <p class="eyebrow">Enterprise Angular Architecture Foundations</p>
@@ -10,9 +12,15 @@
     </p>
     <div class="chapter-actions">
       <span class="status">{{ chapterStatus }}</span>
-      <button class="button button--light" type="button" (click)="startChapter()">
-        Start chapter
-      </button>
+      <a class="button button--light" href="#projects-title">Explore the live feature</a>
+      <a
+        class="button button--outline"
+        href="https://github.com/mrozmen7/enterprise-angular-architecture-foundations"
+        target="_blank"
+        rel="noreferrer"
+      >
+        View source on GitHub
+      </a>
     </div>
   </header>
 
@@ -42,6 +50,13 @@
         <div>
           <h3>Architectural decision</h3>
           <p>Apply the smallest justified pattern and record the trade-off.</p>
+        </div>
+      </li>
+      <li>
+        <span>04</span>
+        <div>
+          <h3>Production evidence</h3>
+          <p>Verify behavior, architecture boundaries, CI, and the deployed application.</p>
         </div>
       </li>
     </ol>

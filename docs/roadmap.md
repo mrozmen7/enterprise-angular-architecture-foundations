@@ -54,4 +54,5 @@ user changes.
 Apply risk-based tests, audit dependency direction, review architecture fitness, and publish the
 final reusable reference.
 
-**Evidence:** test strategy, architecture guide, final project review.
+**Evidence:** automated architecture fitness function, risk-based test strategy, architecture guide,
+production-readiness review, GitHub Pages deployment, final tag, and release.
