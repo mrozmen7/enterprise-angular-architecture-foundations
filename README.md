@@ -17,11 +17,12 @@ problem, and ends with code, tests, documentation, and an explicit architectural
 
 ## Current status
 
-**Chapter 2 complete — Domain and State Modeling**
+**Chapter 3 complete — Separation of Concerns and Dependency Injection**
 
-The Project Workspace now uses an Angular-independent business model, explicit project status and
-priority values, runtime project invariants, identity-based selection, and a dedicated workspace
-state model.
+The Project Workspace is now a bounded feature with separate presentation, application, port,
+infrastructure, and domain responsibilities. Angular Dependency Injection connects an abstract
+repository contract to a local adapter without coupling the component or workflow to the data
+source.
 
 ### Current evidence
 
@@ -29,10 +30,13 @@ state model.
 - explicit Project, Customer, TeamMember, status, priority, and timeline models;
 - runtime validation for required business text and valid date ranges;
 - source state separated from derived filtered and selected project state;
+- feature presentation separated from the root application shell;
+- repository port with replaceable local and test implementations;
+- `InjectionToken`, `useClass`, `useFactory`, and component-scoped workspace state;
 - strict TypeScript and Angular template compilation;
 - modern Angular template control flow with `@for`, `@if`, and `@empty`;
-- twenty passing domain, state, and component tests;
-- documented domain vocabulary, dependency direction, and architecture decision.
+- twenty-seven passing domain, state, application, infrastructure, presentation, and shell tests;
+- documented dependency direction, injector scope, and architecture decisions.
 
 ## Learning path
 
@@ -40,7 +44,7 @@ state model.
 | ------- | ------------------------------- | ------------------------------------------------------------ |
 | 1 ✅    | Application and complexity      | Recognize responsibilities, state, and change pressure       |
 | 2 ✅    | Domain and state modeling       | Represent business rules and valid states explicitly         |
-| 3       | Separation of concerns and DI   | Isolate UI, application, domain, and infrastructure concerns |
+| 3 ✅    | Separation of concerns and DI   | Isolate UI, application, domain, and infrastructure concerns |
 | 4       | Immutable state transitions     | Make state changes predictable and traceable                 |
 | 5       | Signals and derived state       | Build scoped, reactive state with clear ownership            |
 | 6       | RxJS and concurrency            | Control cancellation, ordering, parallelism, and failures    |
@@ -70,9 +74,12 @@ reasoning those tools depend on.
 - [Chapter 1 completion review](docs/learning/section-01-completion.md)
 - [Chapter 2 learning guide](docs/learning/section-02-overview.md)
 - [Chapter 2 completion review](docs/learning/section-02-completion.md)
+- [Chapter 3 learning guide](docs/learning/section-03-overview.md)
+- [Chapter 3 completion review](docs/learning/section-03-completion.md)
 - [CI/CD learning guide](docs/ci-cd.md)
 - [Architecture Decision Records](docs/adr/README.md)
 - [ADR 0001 — Model the Project Domain Explicitly](docs/adr/0001-model-project-domain-explicitly.md)
+- [ADR 0002 — Invert the Project Data Dependency](docs/adr/0002-invert-project-data-dependency.md)
 - [Security baseline](docs/security-baseline.md)
 - [Tooling notes](docs/tooling-notes.md)
 
