@@ -55,4 +55,35 @@ describe('ProjectWorkspaceService', () => {
     expect(workspace.state.statusFilter).toBe('All');
     expect(workspace.selectedProject).toBeNull();
   });
+
+  it('should replace the state reference when a command changes state', () => {
+    const workspace = new ProjectWorkspaceService(new FakeProjectRepository());
+    const previousState = workspace.state;
+
+    workspace.updateSearch('Bank');
+
+    expect(workspace.state).not.toBe(previousState);
+    expect(previousState.searchTerm).toBe('');
+    expect(workspace.state.searchTerm).toBe('Bank');
+  });
+
+  it('should update priority through an immutable collection transition', () => {
+    const workspace = new ProjectWorkspaceService(new FakeProjectRepository());
+    const previousProjects = workspace.state.projects;
+
+    workspace.updateProjectPriority('project-payment-platform-migration', 'Low');
+
+    expect(workspace.state.projects).not.toBe(previousProjects);
+    expect(workspace.state.projects[0]?.priority).toBe('Low');
+    expect(previousProjects[0]?.priority).toBe('High');
+  });
+
+  it('should ignore unsupported priority values from the presentation boundary', () => {
+    const workspace = new ProjectWorkspaceService(new FakeProjectRepository());
+    const previousState = workspace.state;
+
+    workspace.updateProjectPriority('project-payment-platform-migration', 'Urgent');
+
+    expect(workspace.state).toBe(previousState);
+  });
 });

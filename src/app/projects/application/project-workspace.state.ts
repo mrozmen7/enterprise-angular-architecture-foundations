@@ -7,19 +7,19 @@ export const PROJECT_STATUS_FILTERS = ['All', ...PROJECT_STATUSES] as const;
 export type ProjectStatusFilter = 'All' | ProjectStatus;
 
 export type ProjectWorkspaceState = {
-  projects: readonly Project[];
-  searchTerm: string;
-  statusFilter: ProjectStatusFilter;
-  selectedProjectId: ProjectId | null;
+  readonly projects: readonly Project[];
+  readonly searchTerm: string;
+  readonly statusFilter: ProjectStatusFilter;
+  readonly selectedProjectId: ProjectId | null;
 };
 
 export function createProjectWorkspaceState(projects: readonly Project[]): ProjectWorkspaceState {
-  return {
-    projects,
+  return Object.freeze({
+    projects: Object.freeze([...projects]),
     searchTerm: '',
     statusFilter: 'All',
     selectedProjectId: null,
-  };
+  });
 }
 
 export function getFilteredProjects(state: ProjectWorkspaceState): readonly Project[] {

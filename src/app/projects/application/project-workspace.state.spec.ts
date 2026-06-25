@@ -17,8 +17,10 @@ describe('Project workspace state', () => {
   });
 
   it('should filter by project or customer name without case sensitivity', () => {
-    const state = createProjectWorkspaceState(PROJECT_SEED);
-    state.searchTerm = 'NORTHSTAR';
+    const state = {
+      ...createProjectWorkspaceState(PROJECT_SEED),
+      searchTerm: 'NORTHSTAR',
+    };
 
     const projects = getFilteredProjects(state);
 
@@ -27,9 +29,11 @@ describe('Project workspace state', () => {
   });
 
   it('should combine search and status filters', () => {
-    const state = createProjectWorkspaceState(PROJECT_SEED);
-    state.searchTerm = 'portal';
-    state.statusFilter = 'Planning';
+    const state = {
+      ...createProjectWorkspaceState(PROJECT_SEED),
+      searchTerm: 'portal',
+      statusFilter: 'Planning' as const,
+    };
 
     const projects = getFilteredProjects(state);
 
@@ -38,23 +42,29 @@ describe('Project workspace state', () => {
   });
 
   it('should return an empty collection when filters do not match', () => {
-    const state = createProjectWorkspaceState(PROJECT_SEED);
-    state.searchTerm = 'Northstar';
-    state.statusFilter = 'Completed';
+    const state = {
+      ...createProjectWorkspaceState(PROJECT_SEED),
+      searchTerm: 'Northstar',
+      statusFilter: 'Completed' as const,
+    };
 
     expect(getFilteredProjects(state)).toEqual([]);
   });
 
   it('should derive the selected project from its identity', () => {
-    const state = createProjectWorkspaceState(PROJECT_SEED);
-    state.selectedProjectId = 'project-compliance-reporting-automation';
+    const state = {
+      ...createProjectWorkspaceState(PROJECT_SEED),
+      selectedProjectId: 'project-compliance-reporting-automation',
+    };
 
     expect(getSelectedProject(state)?.name).toBe('Compliance Reporting Automation');
   });
 
   it('should return null when the selected identity is missing', () => {
-    const state = createProjectWorkspaceState(PROJECT_SEED);
-    state.selectedProjectId = 'project-does-not-exist';
+    const state = {
+      ...createProjectWorkspaceState(PROJECT_SEED),
+      selectedProjectId: 'project-does-not-exist',
+    };
 
     expect(getSelectedProject(state)).toBeNull();
   });

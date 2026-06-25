@@ -60,6 +60,39 @@ describe('ProjectWorkspace presentation', () => {
     expect(compiled.querySelector('.project-card--selected')).toBeTruthy();
   });
 
+  it('should update the selected project priority', () => {
+    const fixture = TestBed.createComponent(ProjectWorkspace);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const firstDetailsButton = compiled.querySelector<HTMLButtonElement>(
+      '.project-card .button--primary',
+    );
+
+    firstDetailsButton?.click();
+    fixture.detectChanges();
+
+    const prioritySelect = compiled.querySelector<HTMLSelectElement>(
+      'select[aria-label="Project priority"]',
+    );
+
+    if (!prioritySelect) {
+      throw new Error('Project priority control was not rendered.');
+    }
+
+    const lowOption = Array.from(prioritySelect.options).find((option) => option.value === 'Low');
+
+    if (!lowOption) {
+      throw new Error('Low priority option was not rendered.');
+    }
+
+    lowOption.selected = true;
+    prioritySelect.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+
+    expect(compiled.querySelector('.project-card')?.textContent).toContain('Priority: Low');
+    expect(prioritySelect.value).toBe('Low');
+  });
+
   it('should search projects by customer name', () => {
     const fixture = TestBed.createComponent(ProjectWorkspace);
     fixture.detectChanges();

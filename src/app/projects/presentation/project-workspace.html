@@ -96,7 +96,19 @@
           </div>
           <div>
             <dt>Priority</dt>
-            <dd>{{ project.priority }}</dd>
+            <dd>
+              <select
+                #prioritySelect
+                class="priority-control"
+                aria-label="Project priority"
+                [value]="project.priority"
+                (change)="workspace.updateProjectPriority(project.id, prioritySelect.value)"
+              >
+                @for (priority of workspace.priorityOptions; track priority) {
+                  <option [attr.value]="priority">{{ priority }}</option>
+                }
+              </select>
+            </dd>
           </div>
           <div>
             <dt>Owner</dt>

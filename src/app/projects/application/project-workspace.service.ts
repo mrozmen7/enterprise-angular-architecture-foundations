@@ -1,5 +1,8 @@
 import type { Project, ProjectId } from '../domain/project';
+import { isProjectPriority, PROJECT_PRIORITIES } from '../domain/project-priority';
 import type { ProjectRepository } from '../ports/project-repository';
+import type { ProjectWorkspaceCommand } from './project-workspace.command';
+import { reduceProjectWorkspace } from './project-workspace.reducer';
 import {
   createProjectWorkspaceState,
   getFilteredProjects,
@@ -10,14 +13,22 @@ import {
 } from './project-workspace.state';
 
 export class ProjectWorkspaceService {
-  readonly state: ProjectWorkspaceState;
+  private currentState: ProjectWorkspaceState;
 
   constructor(repository: ProjectRepository) {
-    this.state = createProjectWorkspaceState(repository.getAll());
+    this.currentState = createProjectWorkspaceState(repository.getAll());
+  }
+
+  get state(): ProjectWorkspaceState {
+    return this.currentState;
   }
 
   get statusOptions(): readonly string[] {
     return PROJECT_STATUS_FILTERS;
+  }
+
+  get priorityOptions(): readonly string[] {
+    return PROJECT_PRIORITIES;
   }
 
   get filteredProjects(): readonly Project[] {
@@ -29,25 +40,47 @@ export class ProjectWorkspaceService {
   }
 
   updateSearch(searchTerm: string): void {
-    this.state.searchTerm = searchTerm;
+    this.dispatch({
+      type: 'search-changed',
+      searchTerm,
+    });
   }
 
   updateStatusFilter(status: string): void {
     if (isProjectStatusFilter(status)) {
-      this.state.statusFilter = status;
+      this.dispatch({
+        type: 'status-filter-changed',
+        statusFilter: status,
+      });
     }
   }
 
   resetFilters(): void {
-    this.state.searchTerm = '';
-    this.state.statusFilter = 'All';
+    this.dispatch({ type: 'filters-reset' });
   }
 
   selectProject(projectId: ProjectId): void {
-    this.state.selectedProjectId = projectId;
+    this.dispatch({
+      type: 'project-selected',
+      projectId,
+    });
+  }
+
+  updateProjectPriority(projectId: ProjectId, priority: string): void {
+    if (isProjectPriority(priority)) {
+      this.dispatch({
+        type: 'project-priority-changed',
+        projectId,
+        priority,
+      });
+    }
   }
 
   clearSelection(): void {
-    this.state.selectedProjectId = null;
+    this.dispatch({ type: 'selection-cleared' });
+  }
+
+  private dispatch(command: ProjectWorkspaceCommand): void {
+    this.currentState = reduceProjectWorkspace(this.currentState, command);
   }
 }

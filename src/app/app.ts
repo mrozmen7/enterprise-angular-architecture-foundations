@@ -11,9 +11,9 @@ import { ProjectWorkspace } from './projects/presentation/project-workspace';
 export class App {
   protected readonly productName = 'OpsFlow';
 
-  protected chapterStatus = 'Chapter 3 · Architecture boundaries';
+  protected chapterStatus = 'Chapter 4 · Immutable transitions';
 
   protected startChapter(): void {
-    this.chapterStatus = 'Chapter 3 · In progress';
+    this.chapterStatus = 'Chapter 4 · In progress';
   }
 }
