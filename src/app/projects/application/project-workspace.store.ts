@@ -1,4 +1,6 @@
-import type { Project, ProjectId } from '../domain/project';
+import { computed, signal } from '@angular/core';
+import type { Signal, WritableSignal } from '@angular/core';
+import type { ProjectId } from '../domain/project';
 import { isProjectPriority, PROJECT_PRIORITIES } from '../domain/project-priority';
 import type { ProjectRepository } from '../ports/project-repository';
 import type { ProjectWorkspaceCommand } from './project-workspace.command';
@@ -12,15 +14,28 @@ import {
   type ProjectWorkspaceState,
 } from './project-workspace.state';
 
-export class ProjectWorkspaceService {
-  private currentState: ProjectWorkspaceState;
+export class ProjectWorkspaceStore {
+  private readonly stateSource: WritableSignal<ProjectWorkspaceState>;
+
+  readonly state: Signal<ProjectWorkspaceState>;
+
+  readonly searchTerm = computed(() => this.state().searchTerm);
+
+  readonly statusFilter = computed(() => this.state().statusFilter);
+
+  readonly filteredProjects = computed(() => getFilteredProjects(this.state()));
+
+  readonly selectedProject = computed(() => getSelectedProject(this.state()));
+
+  readonly projectCount = computed(() => this.filteredProjects().length);
+
+  readonly hasActiveFilters = computed(
+    () => this.searchTerm().trim().length > 0 || this.statusFilter() !== 'All',
+  );
 
   constructor(repository: ProjectRepository) {
-    this.currentState = createProjectWorkspaceState(repository.getAll());
-  }
-
-  get state(): ProjectWorkspaceState {
-    return this.currentState;
+    this.stateSource = signal(createProjectWorkspaceState(repository.getAll()));
+    this.state = this.stateSource.asReadonly();
   }
 
   get statusOptions(): readonly string[] {
@@ -29,14 +44,6 @@ export class ProjectWorkspaceService {
 
   get priorityOptions(): readonly string[] {
     return PROJECT_PRIORITIES;
-  }
-
-  get filteredProjects(): readonly Project[] {
-    return getFilteredProjects(this.state);
-  }
-
-  get selectedProject(): Project | null {
-    return getSelectedProject(this.state);
   }
 
   updateSearch(searchTerm: string): void {
@@ -81,6 +88,6 @@ export class ProjectWorkspaceService {
   }
 
   private dispatch(command: ProjectWorkspaceCommand): void {
-    this.currentState = reduceProjectWorkspace(this.currentState, command);
+    this.stateSource.update((state) => reduceProjectWorkspace(state, command));
   }
 }

@@ -5,7 +5,12 @@
       <h2 id="projects-title">Customer projects</h2>
     </div>
 
-    <p class="result-count">{{ workspace.filteredProjects.length }} projects found</p>
+    <div class="result-summary">
+      <p class="result-count">{{ workspace.projectCount() }} projects found</p>
+      @if (workspace.hasActiveFilters()) {
+        <span class="active-filter">Filtered view</span>
+      }
+    </div>
   </div>
 
   <div class="workspace">
@@ -17,7 +22,7 @@
             #searchInput
             type="search"
             placeholder="Try Northstar or Portal"
-            [value]="workspace.state.searchTerm"
+            [value]="workspace.searchTerm()"
             (input)="workspace.updateSearch(searchInput.value)"
           />
         </label>
@@ -26,7 +31,7 @@
           <span>Project status</span>
           <select
             #statusSelect
-            [value]="workspace.state.statusFilter"
+            [value]="workspace.statusFilter()"
             (change)="workspace.updateStatusFilter(statusSelect.value)"
           >
             @for (status of workspace.statusOptions; track status) {
@@ -41,10 +46,10 @@
       </div>
 
       <ul class="project-list">
-        @for (project of workspace.filteredProjects; track project.id) {
+        @for (project of workspace.filteredProjects(); track project.id) {
           <li
             class="project-card"
-            [class.project-card--selected]="workspace.selectedProject?.id === project.id"
+            [class.project-card--selected]="workspace.selectedProject()?.id === project.id"
           >
             <div class="project-card__heading">
               <div>
@@ -81,7 +86,7 @@
     </div>
 
     <aside class="project-detail" aria-live="polite">
-      @if (workspace.selectedProject; as project) {
+      @if (workspace.selectedProject(); as project) {
         <p class="section-label">Selected project</p>
         <h2>{{ project.name }}</h2>
 

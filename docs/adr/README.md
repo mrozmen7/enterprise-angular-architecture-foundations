@@ -8,6 +8,7 @@ it introduces. They prevent architecture from becoming undocumented team folklor
 - [ADR 0001 — Model the Project Domain Explicitly](0001-model-project-domain-explicitly.md)
 - [ADR 0002 — Invert the Project Data Dependency](0002-invert-project-data-dependency.md)
 - [ADR 0003 — Use Immutable Workspace Transitions](0003-use-immutable-workspace-transitions.md)
+- [ADR 0004 — Use Signals for Workspace Reactivity](0004-use-signals-for-workspace-reactivity.md)
 
 ## File naming
 

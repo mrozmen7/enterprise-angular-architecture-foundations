@@ -17,11 +17,11 @@ problem, and ends with code, tests, documentation, and an explicit architectural
 
 ## Current status
 
-**Chapter 4 complete — Immutable State Transitions**
+**Chapter 5 complete — Signals and Derived State**
 
-Every Project Workspace change now travels through an explicit command and pure reducer. Previous
-state is preserved, no-op transitions keep stable references, and project priority updates use
-immutable structural sharing.
+Project Workspace state now has one private writable Signal, public readonly exposure, and computed
+derived Signals. Angular tracks template consumers while commands and the immutable reducer remain
+the only write path.
 
 ### Current evidence
 
@@ -35,11 +35,13 @@ immutable structural sharing.
 - typed workspace commands and a pure immutable reducer;
 - frozen state containers with stable references for no-op transitions;
 - immutable project priority updates that preserve unrelated project references;
+- private `WritableSignal` ownership with a public readonly `Signal`;
+- lazy and memoized computed filtering, selection, count, and filter-state derivations;
+- OnPush template dependency tracking without effect-based state propagation;
 - strict TypeScript and Angular template compilation;
 - modern Angular template control flow with `@for`, `@if`, and `@empty`;
-- thirty-nine passing domain, reducer, state, application, infrastructure, presentation, and shell
-  tests;
-- documented dependency direction, injector scope, transition table, and architecture decisions.
+- forty passing domain, reducer, signal-store, state, infrastructure, presentation, and shell tests;
+- documented dependency direction, transition table, reactive ownership, and architecture decisions.
 
 ## Learning path
 
@@ -49,7 +51,7 @@ immutable structural sharing.
 | 2 ✅    | Domain and state modeling       | Represent business rules and valid states explicitly         |
 | 3 ✅    | Separation of concerns and DI   | Isolate UI, application, domain, and infrastructure concerns |
 | 4 ✅    | Immutable state transitions     | Make state changes predictable and traceable                 |
-| 5       | Signals and derived state       | Build scoped, reactive state with clear ownership            |
+| 5 ✅    | Signals and derived state       | Build scoped, reactive state with clear ownership            |
 | 6       | RxJS and concurrency            | Control cancellation, ordering, parallelism, and failures    |
 | 7       | Server and distributed state    | Handle optimistic updates, stale data, and conflicts         |
 | 8       | Testing and architecture review | Verify behavior and publish the reference architecture       |
@@ -81,11 +83,14 @@ reasoning those tools depend on.
 - [Chapter 3 completion review](docs/learning/section-03-completion.md)
 - [Chapter 4 learning guide](docs/learning/section-04-overview.md)
 - [Chapter 4 completion review](docs/learning/section-04-completion.md)
+- [Chapter 5 learning guide](docs/learning/section-05-overview.md)
+- [Chapter 5 completion review](docs/learning/section-05-completion.md)
 - [CI/CD learning guide](docs/ci-cd.md)
 - [Architecture Decision Records](docs/adr/README.md)
 - [ADR 0001 — Model the Project Domain Explicitly](docs/adr/0001-model-project-domain-explicitly.md)
 - [ADR 0002 — Invert the Project Data Dependency](docs/adr/0002-invert-project-data-dependency.md)
 - [ADR 0003 — Use Immutable Workspace Transitions](docs/adr/0003-use-immutable-workspace-transitions.md)
+- [ADR 0004 — Use Signals for Workspace Reactivity](docs/adr/0004-use-signals-for-workspace-reactivity.md)
 - [Security baseline](docs/security-baseline.md)
 - [Tooling notes](docs/tooling-notes.md)
 

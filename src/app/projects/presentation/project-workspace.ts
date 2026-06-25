@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ProjectWorkspaceService } from '../application/project-workspace.service';
+import { ProjectWorkspaceStore } from '../application/project-workspace.store';
 import { PROJECT_WORKSPACE_PROVIDER } from '../project.providers';
 
 @Component({
@@ -10,5 +10,5 @@ import { PROJECT_WORKSPACE_PROVIDER } from '../project.providers';
   providers: [PROJECT_WORKSPACE_PROVIDER],
 })
 export class ProjectWorkspace {
-  protected readonly workspace = inject(ProjectWorkspaceService);
+  protected readonly workspace = inject(ProjectWorkspaceStore);
 }
