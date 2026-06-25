@@ -11,9 +11,9 @@ import { ProjectWorkspace } from './projects/presentation/project-workspace';
 export class App {
   protected readonly productName = 'OpsFlow';
 
-  protected chapterStatus = 'Chapter 5 · Signals and derived state';
+  protected chapterStatus = 'Chapter 6 · RxJS and concurrency';
 
   protected startChapter(): void {
-    this.chapterStatus = 'Chapter 5 · In progress';
+    this.chapterStatus = 'Chapter 6 · In progress';
   }
 }

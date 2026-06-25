@@ -8,4 +8,11 @@ describe('LocalProjectRepository', () => {
     expect(projects).toHaveLength(3);
     expect(projects.every((project) => project.id.length > 0)).toBe(true);
   });
+
+  it('should expose cold search observables', () => {
+    const repository = new LocalProjectRepository();
+    const search = repository.search('Portal');
+
+    expect(typeof search.subscribe).toBe('function');
+  });
 });

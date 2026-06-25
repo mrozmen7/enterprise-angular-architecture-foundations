@@ -79,6 +79,23 @@ h2 {
   font-weight: 800;
 }
 
+.request-note,
+.request-error {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.request-note {
+  color: #475569;
+}
+
+.request-error {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
 .filters input,
 .filters select {
   width: 100%;
@@ -116,6 +133,11 @@ select:focus-visible {
 .button--secondary {
   color: #1e293b;
   background: #e2e8f0;
+}
+
+.button:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 .project-list {
@@ -259,6 +281,31 @@ select:focus-visible {
   border-radius: 0.6rem;
   font: inherit;
   font-weight: 700;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.briefing {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+}
+
+.briefing h3 {
+  margin: 0;
+  color: #172554;
+}
+
+.briefing p {
+  margin: 0.6rem 0 0;
+  color: #334155;
+  line-height: 1.5;
 }
 
 @media (max-width: 48rem) {

@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 import { PROJECT_SEED } from '../data/project.seed';
+import type { ProjectPriority } from '../domain/project-priority';
 import type { ProjectRepository } from '../ports/project-repository';
 import { PROJECT_REPOSITORY } from '../project.providers';
 import { ProjectWorkspace } from './project-workspace';
@@ -9,15 +11,35 @@ describe('ProjectWorkspace presentation', () => {
 
   const fakeRepository: ProjectRepository = {
     getAll: () => repositoryProjects,
+    search: (query) =>
+      of(
+        repositoryProjects.filter(
+          (project) =>
+            project.name.toLowerCase().includes(query.toLowerCase()) ||
+            project.customer.name.toLowerCase().includes(query.toLowerCase()),
+        ),
+      ),
+    savePriority: (projectId, priority: ProjectPriority) =>
+      of({
+        ...repositoryProjects.find((project) => project.id === projectId)!,
+        priority,
+      }),
+    loadRiskSummary: () => of('Risk summary'),
+    loadActivitySummary: () => of('Activity summary'),
   };
 
   beforeEach(async () => {
+    vi.useFakeTimers();
     repositoryProjects = PROJECT_SEED;
 
     await TestBed.configureTestingModule({
       imports: [ProjectWorkspace],
       providers: [{ provide: PROJECT_REPOSITORY, useValue: fakeRepository }],
     }).compileComponents();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('should render projects supplied through the repository port', () => {
@@ -86,6 +108,7 @@ describe('ProjectWorkspace presentation', () => {
     }
 
     lowOption.selected = true;
+    prioritySelect.value = 'Low';
     prioritySelect.dispatchEvent(new Event('change'));
     fixture.detectChanges();
 
@@ -105,6 +128,8 @@ describe('ProjectWorkspace presentation', () => {
 
     searchInput.value = 'Helvetia';
     searchInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    vi.advanceTimersByTime(300);
     fixture.detectChanges();
 
     expect(compiled.querySelectorAll('.project-card')).toHaveLength(1);
@@ -154,8 +179,32 @@ describe('ProjectWorkspace presentation', () => {
     searchInput.value = 'Unknown project';
     searchInput.dispatchEvent(new Event('input'));
     fixture.detectChanges();
+    vi.advanceTimersByTime(300);
+    fixture.detectChanges();
 
     expect(compiled.querySelectorAll('.project-card')).toHaveLength(0);
     expect(compiled.querySelector('.empty-state')?.textContent).toContain('No matching projects');
+  });
+
+  it('should generate a parallel project briefing', () => {
+    const fixture = TestBed.createComponent(ProjectWorkspace);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const firstDetailsButton = compiled.querySelector<HTMLButtonElement>(
+      '.project-card .button--primary',
+    );
+
+    firstDetailsButton?.click();
+    fixture.detectChanges();
+
+    const briefingButton = Array.from(compiled.querySelectorAll<HTMLButtonElement>('button')).find(
+      (button) => button.textContent?.includes('Generate briefing'),
+    );
+
+    briefingButton?.click();
+    fixture.detectChanges();
+
+    expect(compiled.querySelector('.briefing')?.textContent).toContain('Risk summary');
+    expect(compiled.querySelector('.briefing')?.textContent).toContain('Activity summary');
   });
 });

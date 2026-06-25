@@ -17,11 +17,11 @@ problem, and ends with code, tests, documentation, and an explicit architectural
 
 ## Current status
 
-**Chapter 5 complete — Signals and Derived State**
+**Chapter 6 complete — RxJS and Concurrency**
 
-Project Workspace state now has one private writable Signal, public readonly exposure, and computed
-derived Signals. Angular tracks template consumers while commands and the immutable reducer remain
-the only write path.
+Project Workspace now coordinates debounced latest-only search, ordered priority saves,
+duplicate-safe briefing generation, parallel work, and recoverable request errors with RxJS while
+Signals continue to expose current UI state.
 
 ### Current evidence
 
@@ -38,10 +38,14 @@ the only write path.
 - private `WritableSignal` ownership with a public readonly `Signal`;
 - lazy and memoized computed filtering, selection, count, and filter-state derivations;
 - OnPush template dependency tracking without effect-based state propagation;
+- Signal-to-Observable search with debounce, deduplication, and stale request cancellation;
+- sequential priority persistence and duplicate-safe parallel briefing workflows;
+- recoverable idle/loading/success/error request state;
 - strict TypeScript and Angular template compilation;
 - modern Angular template control flow with `@for`, `@if`, and `@empty`;
-- forty passing domain, reducer, signal-store, state, infrastructure, presentation, and shell tests;
-- documented dependency direction, transition table, reactive ownership, and architecture decisions.
+- forty-two passing domain, reducer, RxJS-store, state, infrastructure, presentation, and shell tests;
+- documented dependency direction, transition table, reactive ownership, concurrency policy, and
+  architecture decisions.
 
 ## Learning path
 
@@ -52,7 +56,7 @@ the only write path.
 | 3 ✅    | Separation of concerns and DI   | Isolate UI, application, domain, and infrastructure concerns |
 | 4 ✅    | Immutable state transitions     | Make state changes predictable and traceable                 |
 | 5 ✅    | Signals and derived state       | Build scoped, reactive state with clear ownership            |
-| 6       | RxJS and concurrency            | Control cancellation, ordering, parallelism, and failures    |
+| 6 ✅    | RxJS and concurrency            | Control cancellation, ordering, parallelism, and failures    |
 | 7       | Server and distributed state    | Handle optimistic updates, stale data, and conflicts         |
 | 8       | Testing and architecture review | Verify behavior and publish the reference architecture       |
 
@@ -85,12 +89,15 @@ reasoning those tools depend on.
 - [Chapter 4 completion review](docs/learning/section-04-completion.md)
 - [Chapter 5 learning guide](docs/learning/section-05-overview.md)
 - [Chapter 5 completion review](docs/learning/section-05-completion.md)
+- [Chapter 6 learning guide](docs/learning/section-06-overview.md)
+- [Chapter 6 completion review](docs/learning/section-06-completion.md)
 - [CI/CD learning guide](docs/ci-cd.md)
 - [Architecture Decision Records](docs/adr/README.md)
 - [ADR 0001 — Model the Project Domain Explicitly](docs/adr/0001-model-project-domain-explicitly.md)
 - [ADR 0002 — Invert the Project Data Dependency](docs/adr/0002-invert-project-data-dependency.md)
 - [ADR 0003 — Use Immutable Workspace Transitions](docs/adr/0003-use-immutable-workspace-transitions.md)
 - [ADR 0004 — Use Signals for Workspace Reactivity](docs/adr/0004-use-signals-for-workspace-reactivity.md)
+- [ADR 0005 — Encode Concurrency Policies with RxJS](docs/adr/0005-encode-concurrency-with-rxjs.md)
 - [Security baseline](docs/security-baseline.md)
 - [Tooling notes](docs/tooling-notes.md)
 

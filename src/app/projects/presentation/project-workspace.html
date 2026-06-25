@@ -25,6 +25,12 @@
             [value]="workspace.searchTerm()"
             (input)="workspace.updateSearch(searchInput.value)"
           />
+          @if (workspace.isSearching()) {
+            <small class="request-note">Searching the project directory…</small>
+          }
+          @if (workspace.searchError(); as error) {
+            <small class="request-error">{{ error }} Showing the last successful result.</small>
+          }
         </label>
 
         <label>
@@ -113,6 +119,12 @@
                   <option [attr.value]="priority">{{ priority }}</option>
                 }
               </select>
+              @if (workspace.isSavingPriority()) {
+                <small class="request-note">Saving queued priority updates…</small>
+              }
+              @if (workspace.prioritySaveError(); as error) {
+                <small class="request-error">{{ error }}</small>
+              }
             </dd>
           </div>
           <div>
@@ -127,9 +139,34 @@
 
         <p>{{ project.summary }}</p>
 
-        <button class="button button--secondary" type="button" (click)="workspace.clearSelection()">
-          Close details
-        </button>
+        <div class="detail-actions">
+          <button
+            class="button button--primary"
+            type="button"
+            [disabled]="workspace.isGeneratingBriefing()"
+            (click)="workspace.generateBriefing(project.id)"
+          >
+            {{ workspace.isGeneratingBriefing() ? 'Generating briefing…' : 'Generate briefing' }}
+          </button>
+          <button
+            class="button button--secondary"
+            type="button"
+            (click)="workspace.clearSelection()"
+          >
+            Close details
+          </button>
+        </div>
+
+        @if (workspace.briefing(); as briefing) {
+          <section class="briefing" aria-label="Project briefing">
+            <h3>Delivery briefing</h3>
+            <p>{{ briefing.riskSummary }}</p>
+            <p>{{ briefing.activitySummary }}</p>
+          </section>
+        }
+        @if (workspace.briefingError(); as error) {
+          <p class="request-error">{{ error }}</p>
+        }
       } @else {
         <p class="section-label">Project detail</p>
         <h2>Select a project</h2>
