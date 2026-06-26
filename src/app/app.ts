@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ProjectWorkspace } from './projects/presentation/project-workspace';
+import { ProjectWorkspace } from './features/projects/presentation/project-workspace';
 
 @Component({
   selector: 'app-root',
