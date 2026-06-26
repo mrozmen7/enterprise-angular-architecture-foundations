@@ -7,8 +7,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideProjects } from './projects/project.providers';
-import { projectApiMockInterceptor } from './projects/infrastructure/project-api.mock';
+import { provideProjects } from './features/projects/project.providers';
+import { projectApiMockInterceptor } from './features/projects/infrastructure/project-api.mock';
 
 export const appConfig: ApplicationConfig = {
   providers: [

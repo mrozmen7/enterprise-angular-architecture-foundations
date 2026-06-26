@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { extname, join, relative, resolve, sep } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const featureRoot = join(root, 'src', 'app', 'projects');
+const featureRoot = join(root, 'src', 'app', 'features', 'projects');
 const violations = [];
 
 const productionFiles = collectFiles(featureRoot).filter(

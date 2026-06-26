@@ -4,8 +4,8 @@ import { App } from './app';
 import {
   projectApiMockInterceptor,
   resetProjectApiMock,
-} from './projects/infrastructure/project-api.mock';
-import { provideProjects } from './projects/project.providers';
+} from './features/projects/infrastructure/project-api.mock';
+import { provideProjects } from './features/projects/project.providers';
 
 describe('App shell', () => {
   beforeEach(async () => {
